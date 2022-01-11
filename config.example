@@ -1,0 +1,13 @@
+[wechat]
+# 更换为你的企业id
+corporation_id = xxx
+ # 更换为你的应用secret
+corporation_secret = xxx
+ # 更换为你的应用id
+agent_id = 1000002
+
+[user]
+# 学号
+student_id = xxx
+# 密码
+password = xxx
