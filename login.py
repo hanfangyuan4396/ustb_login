@@ -34,11 +34,9 @@ class Login:
 
 
     def login(self, stuid, pwd):
-        ipv6_addr = self.__get_ipv6_address()
         data = {
             'DDDDD': stuid,
             'upass': pwd,
-            'v6ip': ipv6_addr,
             '0MKKey': '123456789'
         }
         response = requests.post(url=self.login_url, data=data, headers=self.headers)
