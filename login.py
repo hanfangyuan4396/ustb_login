@@ -55,7 +55,7 @@ if __name__ == '__main__':
     config_parser = configparser.ConfigParser()
     config_path = os.path.dirname(__file__)
     # config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
-    config_parser.read(filenames='config.ini')
+    config_parser.read(filenames='D:/login_config.ini')
     STUDENT_ID = config_parser['user']['student_id']
     PASSWORD = config_parser['user']['password']
     while True:
