@@ -1,4 +1,5 @@
 import re
+import os
 import configparser
 import requests
 from wechat_api import wechat_api
@@ -26,7 +27,7 @@ class Login:
         flow = re.search(r"flow='(\d+)", login_success_html).group(1)
         flow = int(flow) / (1024 * 1024)
         flow = round(flow, 2)
-        ip = re.search(r"lip='(.*?)'", login_success_html).group(1)
+        ip = re.search(r"v4ip='(.*?)'", login_success_html).group(1)
         print(fee, flow, ip)
         return fee, flow, ip
 
@@ -53,7 +54,8 @@ class Login:
 
 if __name__ == '__main__':
     config_parser = configparser.ConfigParser()
-    config_parser.read(filenames='config.ini')
+    config_path = os.path.dirname(__file__)
+    config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
     STUDENT_ID = config_parser['user']['student_id']
     PASSWORD = config_parser['user']['password']
     try:
