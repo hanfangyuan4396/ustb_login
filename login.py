@@ -1,5 +1,6 @@
 import re
 import os
+import time
 import configparser
 import requests
 from wechat_api import wechat_api
@@ -55,12 +56,15 @@ class Login:
 if __name__ == '__main__':
     config_parser = configparser.ConfigParser()
     config_path = os.path.dirname(__file__)
-    config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
+    # config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
+    config_parser.read(filenames='config.ini')
     STUDENT_ID = config_parser['user']['student_id']
     PASSWORD = config_parser['user']['password']
-    try:
-        new_login = Login()
-        new_login.login(STUDENT_ID, PASSWORD)
-    except Exception as e:
-        print("发生异常!\n信息:", e)
-        wechat_api.send_text_message('发生异常', f'异常信息: {e}')
+    while True:
+        try:
+            new_login = Login()
+            new_login.login(STUDENT_ID, PASSWORD)
+        except Exception as e:
+            print("发生异常!\n信息:", e)
+            wechat_api.send_text_message('发生异常', f'异常信息: {e}')
+        time.sleep(60 * 60 * 8)

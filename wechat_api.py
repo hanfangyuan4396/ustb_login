@@ -7,7 +7,8 @@ import requests
 # 企业id、key
 config_parser = configparser.ConfigParser()
 config_path = os.path.dirname(__file__)
-config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
+# config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
+config_parser.read(filenames='config.ini')
 CORP_ID = config_parser['wechat']['corporation_id']
 CORP_SECRET = config_parser['wechat']['corporation_secret']
 AGENT_ID = int(config_parser['wechat']['agent_id'])
