@@ -1,12 +1,11 @@
 import re
-import os
-import time
+import sys
 import configparser
 import requests
-from wechat_api import wechat_api
+from wechat_api import WeChatAPI
 
 class Login:
-    def __init__(self):
+    def __init__(self, wechat_api):
         self.get_ipv6_url = 'http://cippv6.ustb.edu.cn/get_ip.php'
         self.login_url = 'http://202.204.48.66/'
         self.headers = {
@@ -14,12 +13,7 @@ class Login:
                           'AppleWebKit/537.36 (KHTML, like Gecko) ' +
                           'Chrome/64.0.3282.186 Safari/537.36'
         }
-
-    def __get_ipv6_address(self):
-        ipv6_html = requests.get(self.get_ipv6_url).text
-        ipv6_address = ipv6_html[13:].split("'")[0]
-        print(ipv6_address)
-        return ipv6_address
+        self.wechat_api = wechat_api
 
     def __get_info(self):
         login_success_html = requests.get(url=self.login_url, headers=self.headers).text
@@ -43,26 +37,30 @@ class Login:
         match = re.search('成功', response.text)
         if match:
             print('登录成功!')
-            wechat_api.send_text_message('登录', '登录成功')
+            self.wechat_api.send_text_message('登录', '登录成功')
             fee, flow, ip = self.__get_info()
-            wechat_api.send_text_message('查询', f'余额: {fee}元\n已使用流量: {flow}GB\nip地址: {ip}')
+            self.wechat_api.send_text_message('查询', f'余额: {fee}元\n已使用流量: {flow}GB\nip地址: {ip}')
         else:
             print('登录失败!')
-            wechat_api.send_text_message('登录', '登录失败')
+            self.wechat_api.send_text_message('登录', '登录失败')
 
 
 if __name__ == '__main__':
-    config_parser = configparser.ConfigParser()
-    config_path = os.path.dirname(__file__)
-    # config_parser.read(filenames=os.path.join(config_path, 'config.ini'))
-    config_parser.read(filenames='D:/login_config.ini')
-    STUDENT_ID = config_parser['user']['student_id']
-    PASSWORD = config_parser['user']['password']
-    while True:
+    if len(sys.argv) == 1:
+        print('login.exe <config_path>')
+    else:
         try:
-            new_login = Login()
+            filenames = sys.argv[1]
+            config_parser = configparser.ConfigParser()
+            config_parser.read(filenames=filenames)
+            CORP_ID = config_parser['wechat']['corporation_id']
+            CORP_SECRET = config_parser['wechat']['corporation_secret']
+            AGENT_ID = int(config_parser['wechat']['agent_id'])
+            STUDENT_ID = config_parser['user']['student_id']
+            PASSWORD = config_parser['user']['password']
+            wechat_api = WeChatAPI(CORP_ID, CORP_SECRET, AGENT_ID)
+            new_login = Login(wechat_api)
             new_login.login(STUDENT_ID, PASSWORD)
         except Exception as e:
             print("发生异常!\n信息:", e)
             wechat_api.send_text_message('发生异常', f'异常信息: {e}')
-        time.sleep(60 * 60 * 8)
